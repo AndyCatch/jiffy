@@ -9,7 +9,7 @@ const Header = () => {
 }
 
 function App() {
-  const [searchTerm, useSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("")
 
   // create-react-app lets you use arrow funcs, removing need to bind()
   const handleChange = (event) => {
@@ -23,6 +23,7 @@ function App() {
 
     // when we have 2+ chars in our search box && pressed enter: run search
     if (value.length > 2 && event.key === "Enter") {
+      setSearchTerm(`${value}`)
       alert(`search for ${value}`)
     }
   }
@@ -37,6 +38,7 @@ function App() {
           placeholder="Type something"
           onChange={handleChange}
           onKeyPress={handleKeyPress}
+          value={searchTerm}
         />
       </div>
     </div>
