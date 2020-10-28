@@ -1,3 +1,5 @@
+import { Component } from "react"
+
 const Header = () => {
   return (
     <div className="header grid">
@@ -7,23 +9,23 @@ const Header = () => {
 }
 
 class App extends Component {
-  
-  constructor(props){
+  constructor(props) {
     super(props)
-    
+
     this.state = {
-      searchTerm:''
+      searchTerm: "",
     }
   }
-  
-  
+
   // create-react-app lets you use arrow funcs, removing need to bind()
   handleChange = (event) => {
     const { value } = event.target
+    // by setting searchTerm in our state+ using that value on the input
+    // it creates a "controlled input"
     this.setState((prevState, props) => ({
       ...prevState, // take old props, spread them out
-      
-      searchTerm: value // overwrite the ones we want afterward
+
+      searchTerm: value, // overwrite the ones we want afterward
     }))
     if (value.length > 2) {
       // show hint message
@@ -38,29 +40,27 @@ class App extends Component {
       alert(`search for ${value}`)
     }
   }
-  
-  render(){
-    // can also be written 
+
+  render() {
+    // can also be written
     // const searchTerm = this.state.searchTerm
-    const {searchTerm} = this.state
+    const { searchTerm } = this.state
     return (
-    <div className="page">
-      <Header />
-      <div className="search grid">
-        {/* our stack of gif images */}
-        <input
-          className="input grid-item"
-          placeholder="Type something"
-          onChange={this.handleChange}
-          onKeyPress={this.handleKeyPress}
-          value={searchTerm}
-        />
+      <div className="page">
+        <Header />
+        <div className="search grid">
+          {/* our stack of gif images */}
+          <input
+            className="input grid-item"
+            placeholder="Type something"
+            onChange={this.handleChange}
+            onKeyPress={this.handleKeyPress}
+            value={searchTerm}
+          />
+        </div>
       </div>
-    </div>
-  )
+    )
   }
-
-
 }
 
 export default App
