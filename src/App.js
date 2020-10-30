@@ -1,5 +1,6 @@
-import { Component } from 'react'
+import React, { Component } from 'react'
 import loader from './assets/loader.svg'
+import close from './assets/close-icon.svg'
 import Gif from './Gif'
 
 const randomChoice = (arr) => {
@@ -7,10 +8,16 @@ const randomChoice = (arr) => {
   return arr[randIndex]
 }
 
-const Header = () => {
+const Header = ({ clearSearch, hasResults }) => {
   return (
     <div className="header grid">
-      <h1 className="title">Jiffy</h1>
+      {hasResults ? (
+        <button>
+          <img src={close} onClick={clearSearch} alt="clear search icon" />
+        </button>
+      ) : (
+        <h1 className="title">Jiffy</h1>
+      )}
     </div>
   )
 }
@@ -30,11 +37,11 @@ const UserHint = ({ loading, hintText }) => (
 class App extends Component {
   constructor(props) {
     super(props)
+    this.textInput = React.createRef()
 
     this.state = {
       searchTerm: '',
       hintText: '',
-      gif: null,
       gifs: [],
     }
   }
@@ -51,17 +58,27 @@ class App extends Component {
       // {data} = better way of writing data.data
       const { data } = await response.json()
 
+      // we need to check if the data [] is empty, to stop errors
+      if (!data.length) {
+        // this will send it to the catch() method
+        throw `Nothing found for ${searchTerm}`
+      }
+
       const randomGif = randomChoice(data)
 
       this.setState((prevState, props) => ({
         ...prevState,
-        gif: randomGif,
         gifs: [...prevState.gifs, randomGif],
         loading: false, // we need to do this otherwise the spinner stays onscreen
+        hintText: `Hit enter to see more ${searchTerm}`,
       }))
       // console.log(data)
     } catch (error) {
-      //
+      this.setState((prevState, props) => ({
+        ...prevState,
+        hintText: error,
+        loading: false,
+      }))
     }
   }
 
@@ -89,17 +106,34 @@ class App extends Component {
     }
   }
 
+  // clear the search state, reset to default
+  clearSearch = () => {
+    //
+    this.setState((prevState, props) => ({
+      ...prevState,
+      searchTerm: '',
+      hintText: '',
+      gifs: [],
+    }))
+
+    // this.input.focus()
+    this.textInput.current.focus()
+  }
+
   render() {
     // could also be written
     // const searchTerm = this.state.searchTerm
-    const { searchTerm, gif } = this.state
+    const { searchTerm, gifs } = this.state
+    const hasResults = gifs.length
     return (
       <div className="page">
-        <Header />
+        <Header clearSearch={this.clearSearch} hasResults={hasResults} />
         <div className="search grid">
           {/* our stack of gif images */}
-          {gif && this.state.gifs.map((gif) => <Gif {...gif} />)}
+          {gifs &&
+            this.state.gifs.map((gif, index) => <Gif key={index} {...gif} />)}
           <input
+            ref={this.textInput}
             className="input grid-item"
             placeholder="Type something"
             onChange={this.handleChange}
