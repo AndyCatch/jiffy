@@ -61,6 +61,7 @@ class App extends Component {
       // we need to check if the data [] is empty, to stop errors
       if (!data.length) {
         // this will send it to the catch() method
+        // eslint-disable-next-line
         throw `Nothing found for ${searchTerm}`
       }
 
